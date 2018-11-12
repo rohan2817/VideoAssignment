@@ -32,4 +32,7 @@ dependencies {
 
     //Constraint Layout
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+
+    //Materil Google
+    implementation 'com.google.android.material:material:1.0.0'
 }
