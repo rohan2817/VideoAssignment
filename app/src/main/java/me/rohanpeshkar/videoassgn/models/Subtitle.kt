@@ -3,17 +3,17 @@ package me.rohanpeshkar.videoassgn.models
 import java.util.concurrent.TimeUnit
 
 data class Subtitle(
-    val startTime: String? = null,
-    val endTime: String? = null,
-    val text: String? = null
+    val startTime: String,
+    val endTime: String,
+    val text: String
 ) {
 
-    val startTimeMillis: Long? by lazy {
-        startTime?.let { convertToAbsoluteMillis(it) }
+    val startTimeMillis: Long by lazy {
+        convertToAbsoluteMillis(startTime)
     }
 
-    val endTimeMillis: Long? by lazy {
-        endTime?.let { convertToAbsoluteMillis(it) }
+    val endTimeMillis: Long by lazy {
+        convertToAbsoluteMillis(endTime)
     }
 
 

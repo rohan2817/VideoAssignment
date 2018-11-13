@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.fragment_video_player.*
 import me.rohanpeshkar.videoassgn.R
 import me.rohanpeshkar.videoassgn.utils.*
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 class VideoPlayerFragment : Fragment() {
@@ -35,7 +34,7 @@ class VideoPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState != null) {
-            mStopPosition = savedInstanceState.getInt(POSITION_FRAGMENT)
+            mStopPosition = savedInstanceState.getInt(TIMER_POSITION)
         }
         initializeVideoView()
         initializeSubtitles()
@@ -47,10 +46,10 @@ class VideoPlayerFragment : Fragment() {
     private fun initializeVideoView() {
         video_view.setVideoURI(getVideoUri(context?.packageName, R.raw.never_give_up))
         val mediaController = MediaController(context)
-        mediaController.setAnchorView(lin_video_view)
+        mediaController.setAnchorView(rel_video_view)
         video_view.setMediaController(mediaController)
         video_view.setOnPreparedListener {
-            start()
+            video_view.start()
             initializeAndStartTimer(0)
             mediaController.show(0)
         }
@@ -58,7 +57,8 @@ class VideoPlayerFragment : Fragment() {
         video_view.setOnCompletionListener {
             video_view.seekTo(1)
             mTimer.cancel()
-            mSubtitleAdapter.scrollTo(-1)
+            mTimerTask.cancel()
+            mSubtitleAdapter.scrollToSeconds(0)
             rev_sub_titles.smoothScrollToPosition(0)
         }
     }
@@ -80,33 +80,11 @@ class VideoPlayerFragment : Fragment() {
      * Initialize subtitles list
      */
     private fun initializeSubtitles() {
-        rev_sub_titles.layoutManager = LinearLayoutManager(context)
-        mSubtitleAdapter = SubtitleAdapter(
-            SubtitleUtils.getSubtitlesFromFile(context, SRT_FILE_NAME)
-        )
-        { startTimeMillis, _ ->
-            startTimeMillis?.toInt()?.let {
-                video_view.seekTo(it)
-            }
-        }
+        val layoutManager = LinearLayoutManager(context)
+        rev_sub_titles.layoutManager = layoutManager
+        mSubtitleAdapter = SubtitleAdapter(getSubtitlesFromFile(context, SRT_FILE_NAME), layoutManager)
+        { startTimeMillis, _ -> video_view.seekTo(startTimeMillis.toInt()) }
         rev_sub_titles.adapter = mSubtitleAdapter
-    }
-
-    /**
-     * Method to start the video in video view
-     */
-    private fun start() {
-        video_view.start()
-    }
-
-
-    /**
-     * Release player and cancel timer
-     */
-    private fun releasePlayer() {
-        video_view.stopPlayback()
-        mTimer.cancel()
-        mTimerTask.cancel()
     }
 
     /**
@@ -125,8 +103,8 @@ class VideoPlayerFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         video_view.pause()
-        mTimer.cancel()
         mTimerTask.cancel()
+        mTimer.cancel()
     }
 
     /**
@@ -134,7 +112,9 @@ class VideoPlayerFragment : Fragment() {
      */
     override fun onStop() {
         super.onStop()
-        releasePlayer()
+        video_view.stopPlayback()
+        mTimer.cancel()
+        mTimerTask.cancel()
     }
 
     /**
@@ -143,7 +123,7 @@ class VideoPlayerFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mStopPosition = video_view.currentPosition
-        outState.putInt(POSITION_FRAGMENT, mStopPosition)
+        outState.putInt(TIMER_POSITION, mStopPosition)
     }
 
 
@@ -152,16 +132,7 @@ class VideoPlayerFragment : Fragment() {
      */
     private fun updateSubtitle() {
         activity?.runOnUiThread {
-            val position = mSubtitleAdapter.getPositionFromSeconds(
-                TimeUnit.MILLISECONDS
-                    .toSeconds(video_view.currentPosition.toLong()).toInt()
-            )
-
-            position?.let {
-                mSubtitleAdapter.scrollTo(it)
-                val layoutManager = (rev_sub_titles.layoutManager as LinearLayoutManager)
-                layoutManager.scrollToPositionWithOffset(it, 100.px)
-            }
+            mSubtitleAdapter.scrollToSeconds(video_view.currentPosition.toSeconds())
         }
     }
 
