@@ -1,4 +1,4 @@
-package me.rohanpeshkar.videoassgn.models
+package com.fluenso.videoplayer.models
 
 import java.util.concurrent.TimeUnit
 

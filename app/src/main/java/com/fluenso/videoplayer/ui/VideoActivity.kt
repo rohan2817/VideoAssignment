@@ -1,8 +1,9 @@
-package me.rohanpeshkar.videoassgn.ui
+package com.fluenso.videoplayer.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import me.rohanpeshkar.videoassgn.R
+import com.fluenso.videoplayer.R
+
 
 class VideoActivity : AppCompatActivity() {
 

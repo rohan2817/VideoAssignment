@@ -1,4 +1,4 @@
-package me.rohanpeshkar.videoassgn
+package me.rohanpeshkar.videoplayer
 
 import org.junit.Test
 

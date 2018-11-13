@@ -1,17 +1,17 @@
-package me.rohanpeshkar.videoassgn.utils
+package com.fluenso.videoplayer.utils
 
 import android.content.Context
-import me.rohanpeshkar.videoassgn.models.Subtitle
+import com.fluenso.videoplayer.models.Subtitle
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 
 /**
  * Method to read subtitles from file and create list of Subtitle objects
- * This method uses RegEx to match & extract content from the subtitle file
+ * This method uses RegEx to match & extract content from the subtitle file.
  * The file is fetched from the assets folder
  */
-fun getSubtitlesFromFile(context: Context?, filename: String): ArrayList<Subtitle> {
+fun getSubtitlesFromFile(context: Context, filename: String): ArrayList<Subtitle> {
 
     val subtitlesList = arrayListOf<Subtitle>()
 
@@ -45,12 +45,8 @@ fun getSubtitlesFromFile(context: Context?, filename: String): ArrayList<Subtitl
     return subtitlesList
 }
 
-/**
- * Method to read subtitles from the file
- * Accepts context & name of the file
- */
-fun getSrtFileContent(context: Context?, filename: String): String {
-    val inputStream = context?.assets?.open(filename)
+fun getSrtFileContent(context: Context, filename: String): String {
+    val inputStream = context.assets?.open(filename)
     val bufferedReader = BufferedReader(InputStreamReader(inputStream))
     val content = bufferedReader.readText()
     inputStream?.close()

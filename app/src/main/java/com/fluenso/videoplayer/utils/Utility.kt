@@ -1,4 +1,4 @@
-package me.rohanpeshkar.videoassgn.utils
+package com.fluenso.videoplayer.utils
 
 import android.content.Context
 import android.content.res.Resources

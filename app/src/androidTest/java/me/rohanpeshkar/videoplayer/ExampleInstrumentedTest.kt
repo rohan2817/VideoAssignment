@@ -1,4 +1,4 @@
-package me.rohanpeshkar.videoassgn
+package me.rohanpeshkar.videoplayer
 
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
